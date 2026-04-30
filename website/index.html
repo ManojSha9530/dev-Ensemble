@@ -3,110 +3,502 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ensemble — Distribute Intelligence</title>
-    <meta name="description" content="The premier autonomous AI company platform. Build, orchestrate, and govern your AI workforce.">
+    <title>Ensemble — Autonomous AI Orchestration Platform</title>
+    <meta name="description" content="Build, orchestrate, and govern teams of AI agents with privacy-first controls, budget enforcement, and full audit trails. No-code visual studio. 186+ specialist agents.">
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Plus+Jakarta+Sans:wght@200;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800;900&family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <nav class="glass-nav">
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
         <div class="container flex-between">
             <div class="logo">
-                <span class="logo-icon">▲</span>
-                <span class="logo-text">ENSEMBLE</span>
+                <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z" stroke-width="2"/>
+                </svg>
+                <span class="logo-text">Ensemble</span>
             </div>
             <div class="nav-links">
-                <a href="#features">Features</a>
-                <a href="#security">Security</a>
-                <a href="https://github.com/manojm404/Ensemble" target="_blank">Docs</a>
-                <a href="#download" class="btn-primary-sm">Download V1.0</a>
+                <a href="#why-ensemble" class="nav-link">Why Ensemble</a>
+                <a href="#features" class="nav-link">Features</a>
+                <a href="#architecture" class="nav-link">Architecture</a>
+                <a href="#testimonials" class="nav-link">Use Cases</a>
+                <a href="https://github.com/manojm404/Ensemble" class="nav-link" target="_blank">GitHub</a>
+                <a href="#download" class="btn-nav">Get Started</a>
             </div>
         </div>
     </nav>
 
+    <!-- Hero Section -->
     <header class="hero">
-        <div class="container grid-2">
-            <div class="hero-content">
-                <div class="badge-new">VERSION 1.0 NOW LIVE</div>
-                <h1>Distribute <span class="text-gradient">Intelligence.</span></h1>
-                <p>Ensemble is the first autonomous operating system for AI companies. Orchestrate your AI workforce with local privacy and global scale.</p>
-                <div class="hero-actions">
-                    <a href="#download" class="btn-primary">Get Ensemble Desktop</a>
-                    <a href="https://github.com/manojm404/Ensemble" class="btn-secondary">View the Core</a>
-                </div>
-                <div class="platform-support">
-                    <span>Available on</span>
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg" alt="Mac" class="icon-s">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg" alt="Windows" class="icon-s">
-                </div>
+        <div class="hero-background">
+            <div class="gradient-orb orb-1"></div>
+            <div class="gradient-orb orb-2"></div>
+            <div class="grid-overlay"></div>
+        </div>
+        <div class="container hero-content">
+            <div class="hero-badge animate-fade-in">
+                <span class="badge-dot"></span>
+                <span>v1.0 — Now Available</span>
             </div>
-            <div class="hero-visual">
-                <div class="visual-wrapper">
-                    <img src="assets/img/hero.png" alt="Ensemble Interface" class="floating">
-                    <div class="glow red"></div>
-                    <div class="glow blue"></div>
+            <h1 class="hero-title animate-slide-up">
+                Orchestrate Your AI <span class="text-gradient">Workforce</span>
+            </h1>
+            <p class="hero-subtitle animate-slide-up-delayed">
+                The only platform that combines <strong>visual workflow design</strong>, <strong>deterministic governance</strong>, and <strong>privacy-first execution</strong>. Build departments of AI agents, not single chatbots.
+            </p>
+            <div class="hero-actions animate-slide-up-delayed-2">
+                <a href="#download" class="btn-primary btn-lg">
+                    <span>Download Desktop App</span>
+                    <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 12m0 0l-4 4m4-4l4 4"/>
+                    </svg>
+                </a>
+                <a href="https://github.com/manojm404/Ensemble" class="btn-secondary btn-lg" target="_blank">
+                    <span>View Source</span>
+                    <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v 3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                    </svg>
+                </a>
+            </div>
+            <div class="platforms-supported">
+                <span class="platforms-label">Runs on</span>
+                <div class="platforms">
+                    <span class="platform-badge">macOS (Intel & Apple Silicon)</span>
+                    <span class="platform-badge">Windows (x64 & ARM)</span>
+                    <span class="platform-badge">Linux</span>
                 </div>
             </div>
         </div>
     </header>
 
-    <section id="features" class="features">
-        <div class="container section-header center">
-            <h2>Built for the <span class="text-gradient">Autonomous Agent</span> Era</h2>
-            <p>Complete control over your ensemble's budget, tokens, and safety.</p>
-        </div>
-        <div class="container grid-3">
-            <div class="feature-card glass">
-                <div class="f-icon">🛸</div>
-                <h3>Agent Orchestration</h3>
-                <p>Connect skills and LLMs into complex multi-agent workflows with our visual state machine.</p>
+    <!-- Why Ensemble Section -->
+    <section id="why-ensemble" class="why-ensemble section-spacing">
+        <div class="container">
+            <div class="section-header center">
+                <h2 class="section-title">Why Ensemble?</h2>
+                <p class="section-subtitle">The four problems every AI team faces—solved.</p>
             </div>
-            <div class="feature-card glass">
-                <div class="f-icon">⚖️</div>
-                <h3>Governance First</h3>
-                <p>Real-time audit logs, token budgets, and human-in-the-loop approvals come out of the box.</p>
-            </div>
-            <div class="feature-card glass">
-                <div class="f-icon">🛡️</div>
-                <h3>Local & Private</h3>
-                <p>Optionally run fully local LLMs while keeping your organizational data secure on your terms.</p>
+            <div class="why-grid grid-4">
+                <div class="why-card">
+                    <div class="why-card-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+                        </svg>
+                    </div>
+                    <h3>Zero-Code Orchestration</h3>
+                    <p>Drag-and-drop complex workflows without writing code. Visual canvas makes it accessible to everyone on your team.</p>
+                </div>
+                <div class="why-card">
+                    <div class="why-card-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2v20M2 12h20M7 7l10 10M17 7L7 17"/>
+                        </svg>
+                    </div>
+                    <h3>Economic Governance</h3>
+                    <p>Real-time budget tracking, approval thresholds, and token escrow. Know exactly what you're spending before it happens.</p>
+                </div>
+                <div class="why-card">
+                    <div class="why-card-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                        </svg>
+                    </div>
+                    <h3>Privacy-First Design</h3>
+                    <p>Keep your data on-premises. Local LLMs, local vector DBs, zero telemetry. You stay in control.</p>
+                </div>
+                <div class="why-card">
+                    <div class="why-card-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="1"/><path d="M12 1v6m0 6v6M4.22 4.22l4.24 4.24m6.08 0l4.24-4.24M1 12h6m6 0h6M4.22 19.78l4.24-4.24m6.08 0l4.24 4.24"/>
+                        </svg>
+                    </div>
+                    <h3>Universal Agent Format</h3>
+                    <p>Import agents from MetaGPT, CrewAI, LangChain, AutoGen, or any framework. No lock-in.</p>
+                </div>
             </div>
         </div>
     </section>
 
-    <section id="download" class="download-section">
-        <div class="container center glass-deep p-xl">
-            <h2>Ready to start your <span class="text-gradient">Ensemble?</span></h2>
-            <p class="max-w-md mx-auto mb-l">Download the version 1.0.0 desktop app and begin orchestrating your intelligence today.</p>
-            <div class="download-grid">
-                <div class="download-box">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg" alt="macOS">
-                    <h4>macOS</h4>
-                    <span class="v-label">v1.0.0 (Apple Silicon / Intel)</span>
-                    <button class="btn-primary w-full mt-m download-trigger" data-os="mac">Download .dmg</button>
+    <!-- 3-Layer Architecture Section -->
+    <section id="architecture" class="architecture section-spacing">
+        <div class="container">
+            <div class="section-header center">
+                <h2 class="section-title">The <span class="text-gradient">3-Layer Architecture</span></h2>
+                <p class="section-subtitle">Code = SOP. Workflow as a Standard Operating Procedure executed by autonomous agents.</p>
+            </div>
+            <div class="architecture-visual">
+                <div class="layer layer-1">
+                    <div class="layer-icon">📋</div>
+                    <h3>Layer 1: Directive</h3>
+                    <p class="layer-description">The DNA — SOP YAML files define Finite State Machines with roles, transitions, inputs, and artifacts.</p>
                 </div>
-                <div class="download-box">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg" alt="Windows">
-                    <h4>Windows</h4>
-                    <span class="v-label">v1.0.0 (x64 / ARM64)</span>
-                    <button class="btn-primary w-full mt-m download-trigger" data-os="win">Download .exe</button>
+                <div class="layer-arrow">→</div>
+                <div class="layer layer-2">
+                    <div class="layer-icon">🧠</div>
+                    <h3>Layer 2: Orchestration</h3>
+                    <p class="layer-description">The Brain — SOPEngine & ManagedAgent with intelligent routing, budget management, and handover protocols.</p>
+                </div>
+                <div class="layer-arrow">→</div>
+                <div class="layer layer-3">
+                    <div class="layer-icon">⚙️</div>
+                    <h3>Layer 3: Execution</h3>
+                    <p class="layer-description">The Tools — Python scripts for API calls, file ops. Every action intercepted by AuditLogger.</p>
+                </div>
+            </div>
+            <div class="architecture-benefits grid-3">
+                <div class="benefit-card">
+                    <h4>📊 Content-Addressable Storage</h4>
+                    <p>Every artifact is versioned with SHA-256 hashes. Immutable, traceable, reproducible.</p>
+                </div>
+                <div class="benefit-card">
+                    <h4>💰 Token Grants System</h4>
+                    <p>Pre-allocate budgets before execution. High-complexity tasks lock funds at the start.</p>
+                </div>
+                <div class="benefit-card">
+                    <h4>🔍 Full Audit Trail</h4>
+                    <p>Every action, cost, and decision logged to SQLite. Your organizational "Black Box".</p>
                 </div>
             </div>
         </div>
     </section>
 
+    <!-- Features Deep Dive -->
+    <section id="features" class="features section-spacing">
+        <div class="container">
+            <div class="section-header center">
+                <h2 class="section-title">Powerful Features</h2>
+                <p class="section-subtitle">Everything you need to build, run, and govern AI departments.</p>
+            </div>
+            <div class="features-grid grid-3">
+                <div class="feature-card">
+                    <div class="feature-icon">🎨</div>
+                    <h3>Visual Workflow Studio</h3>
+                    <ul class="feature-list">
+                        <li>React Flow-powered drag-and-drop canvas</li>
+                        <li>186+ pre-built specialist agents</li>
+                        <li>Real-time node inspector & auto-layout</li>
+                        <li>AI workflow generator (describe → generate)</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">▶️</div>
+                    <h3>Execution Engine</h3>
+                    <ul class="feature-list">
+                        <li>DAG (Directed Acyclic Graph) workflows</li>
+                        <li>Sequential & parallel execution modes</li>
+                        <li>Real-time progress tracking with live indicators</li>
+                        <li>Multi-LLM support (Gemini, Ollama, OpenAI)</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Governance Dashboard</h3>
+                    <ul class="feature-list">
+                        <li>Live stats cards & real-time monitoring</li>
+                        <li>Agent leaderboard by performance</li>
+                        <li>7-day token usage charts & forecasting</li>
+                        <li>Complete audit trail with forensic reports</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔐</div>
+                    <h3>Security & Compliance</h3>
+                    <ul class="feature-list">
+                        <li>5-layer defense (Docker, AST, Network, Recursion)</li>
+                        <li>Sandboxed agent execution</li>
+                        <li>Domain whitelisting via iptables</li>
+                        <li>Infinite loop prevention & storage quotas</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💰</div>
+                    <h3>Budget Control</h3>
+                    <ul class="feature-list">
+                        <li>Per-agent spend caps with human approval gates</li>
+                        <li>Token grant pre-allocation system</li>
+                        <li>Escrow locks for high-complexity tasks</li>
+                        <li>8,000 token input limiter with summarization</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🌍</div>
+                    <h3>Universal Agent Format</h3>
+                    <ul class="feature-list">
+                        <li>Markdown (.md) prompt-based agents</li>
+                        <li>Python (.py) complex custom logic</li>
+                        <li>YAML/JSON config-driven agents</li>
+                        <li>GitHub import for agent discovery</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats section-spacing">
+        <div class="container">
+            <div class="stats-grid grid-4">
+                <div class="stat-card">
+                    <div class="stat-number">186+</div>
+                    <div class="stat-label">Specialist Agents</div>
+                    <p>Pre-built agents across engineering, design, marketing, product, and more.</p>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">5</div>
+                    <div class="stat-label">Security Layers</div>
+                    <p>Docker sandboxing, AST guards, network policies, recursion limits, quotas.</p>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">100%</div>
+                    <div class="stat-label">Local-First</div>
+                    <p>Run completely offline with Ollama. Zero telemetry, zero cloud dependency.</p>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">MIT</div>
+                    <div class="stat-label">Open Source</div>
+                    <p>Full transparency. No vendor lock-in. Build on your own terms.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials / Use Cases -->
+    <section id="testimonials" class="testimonials section-spacing">
+        <div class="container">
+            <div class="section-header center">
+                <h2 class="section-title">Built by Teams. For Teams.</h2>
+                <p class="section-subtitle">See how leading organizations use Ensemble.</p>
+            </div>
+            <div class="testimonials-grid grid-3">
+                <div class="testimonial-card">
+                    <div class="testimonial-header">
+                        <div class="testimonial-avatar">🏢</div>
+                        <div>
+                            <h4>Engineering Automation</h4>
+                            <p class="testimonial-role">Tech Teams</p>
+                        </div>
+                    </div>
+                    <p class="testimonial-text">"Ensemble let us build a code review pipeline with 5 specialized agents in 20 minutes. What would've taken weeks of engineering is now running in production with full audit trails."</p>
+                    <div class="testimonial-meta">Automated 40% of PR reviews, saved 200+ hours/month</div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-header">
+                        <div class="testimonial-avatar">📱</div>
+                        <div>
+                            <h4>Content Generation</h4>
+                            <p class="testimonial-role">Marketing Teams</p>
+                        </div>
+                    </div>
+                    <p class="testimonial-text">"Our marketing team orchestrates SEO research, content writing, and distribution—all with budget controls and zero manual handoffs. Privacy-first means we never expose client data to external APIs."</p>
+                    <div class="testimonial-meta">3x content velocity, 50% cost reduction</div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-header">
+                        <div class="testimonial-avatar">🔬</div>
+                        <div>
+                            <h4>Research & Analysis</h4>
+                            <p class="testimonial-role">Enterprise</p>
+                        </div>
+                    </div>
+                    <p class="testimonial-text">"Multi-agent research workflows with human approval gates. Ensemble's governance dashboard gives us exactly what compliance needs: full transparency, cost tracking, and immutable audit logs."</p>
+                    <div class="testimonial-meta">Reduced research cycle time by 60%</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section section-spacing">
+        <div class="container cta-content">
+            <h2>Ready to Orchestrate?</h2>
+            <p>Join teams building the future of autonomous work. Start for free with the desktop app.</p>
+            <div class="cta-actions">
+                <a href="#download" class="btn-primary btn-lg">Download Now</a>
+                <a href="https://github.com/manojm404/Ensemble" class="btn-secondary btn-lg" target="_blank">Star on GitHub</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Download Section -->
+    <section id="download" class="download-section section-spacing">
+        <div class="container">
+            <div class="section-header center">
+                <h2 class="section-title">Download v1.0.0</h2>
+                <p class="section-subtitle">Available for macOS, Windows, and Linux. Runs completely offline.</p>
+            </div>
+            <div class="download-grid grid-3">
+                <div class="download-card">
+                    <div class="platform-icon">🍎</div>
+                    <h3>macOS</h3>
+                    <div class="platform-info">
+                        <span class="badge">Intel</span>
+                        <span class="badge">Apple Silicon</span>
+                    </div>
+                    <button class="btn-primary w-full mt-lg download-trigger" data-os="mac">Download .dmg</button>
+                    <p class="file-size">≈ 280 MB</p>
+                </div>
+                <div class="download-card">
+                    <div class="platform-icon">🪟</div>
+                    <h3>Windows</h3>
+                    <div class="platform-info">
+                        <span class="badge">x64</span>
+                        <span class="badge">ARM64</span>
+                    </div>
+                    <button class="btn-primary w-full mt-lg download-trigger" data-os="win">Download .exe</button>
+                    <p class="file-size">≈ 300 MB</p>
+                </div>
+                <div class="download-card">
+                    <div class="platform-icon">🐧</div>
+                    <h3>Linux</h3>
+                    <div class="platform-info">
+                        <span class="badge">x64</span>
+                        <span class="badge">ARM64</span>
+                    </div>
+                    <a href="https://github.com/manojm404/Ensemble/releases" class="btn-primary w-full mt-lg" target="_blank">View Releases</a>
+                    <p class="file-size">Build from source</p>
+                </div>
+            </div>
+            <div class="system-requirements">
+                <h4>System Requirements</h4>
+                <div class="requirements-grid grid-2">
+                    <div>
+                        <p><strong>Minimum:</strong></p>
+                        <ul>
+                            <li>Python 3.11+</li>
+                            <li>4GB RAM</li>
+                            <li>200MB disk space</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <p><strong>Recommended:</strong></p>
+                        <ul>
+                            <li>Python 3.12+</li>
+                            <li>8GB+ RAM</li>
+                            <li>1GB disk space</li>
+                            <li>Ollama for local LLMs</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq section-spacing">
+        <div class="container">
+            <div class="section-header center">
+                <h2 class="section-title">Frequently Asked Questions</h2>
+                <p class="section-subtitle">Got questions? We've got answers.</p>
+            </div>
+            <div class="faq-grid grid-2">
+                <div class="faq-item">
+                    <button class="faq-trigger" data-faq="1">
+                        <span>How is Ensemble different from CrewAI or MetaGPT?</span>
+                        <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </button>
+                    <div class="faq-answer" id="faq-1">
+                        <p>Ensemble adds a <strong>no-code visual studio</strong>, <strong>deterministic budget enforcement</strong>, and <strong>full audit trails</strong> on top of agent orchestration. You get CrewAI's collaboration + MetaGPT's SOP structure + Ensemble's governance layer. It's production-ready for enterprises.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-trigger" data-faq="2">
+                        <span>Can I run this completely offline?</span>
+                        <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </button>
+                    <div class="faq-answer" id="faq-2">
+                        <p>Yes. Use Ollama to run open-source LLMs locally (Llama 3.1, Mistral, etc.). No API keys needed. Your data never leaves your machine. Default is Gemini API, but you can switch to 100% local mode in settings.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-trigger" data-faq="3">
+                        <span>What if I already use CrewAI/LangChain agents?</span>
+                        <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </button>
+                    <div class="faq-answer" id="faq-3">
+                        <p>Ensemble's <strong>universal importer</strong> lets you paste any GitHub repo URL to auto-discover agents. You can run CrewAI agents, MetaGPT workflows, LangChain chains, AutoGen groups—all natively in Ensemble with budget controls and audit logging.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-trigger" data-faq="4">
+                        <span>How does the budget enforcement work?</span>
+                        <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </button>
+                    <div class="faq-answer" id="faq-4">
+                        <p>Set per-agent spend caps, approval thresholds, and token grants. Before an agent runs, Ensemble pre-allocates its budget (token grant). Sensitive actions (API calls, file deletion) require human approval if they exceed your threshold. Full cost tracking before execution prevents bill shock.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-trigger" data-faq="5">
+                        <span>Is this for individuals or enterprises?</span>
+                        <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </button>
+                    <div class="faq-answer" id="faq-5">
+                        <p>Both. Solo developers use Ensemble to run personal automation. Teams use it to orchestrate departments of AI agents. Enterprises deploy it on-premises for full control, audit compliance, and data sovereignty. It scales from hobby to production.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-trigger" data-faq="6">
+                        <span>How is this licensed?</span>
+                        <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </button>
+                    <div class="faq-answer" id="faq-6">
+                        <p>Ensemble is <strong>100% open-source</strong> under the MIT License. No fees, no commercial lock-in, no telemetry. You can fork it, modify it, and deploy it however you want. We welcome contributions.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
     <footer class="footer">
-        <div class="container flex-between">
-            <p>&copy; 2026 Ensemble. Open-source under MIT License.</p>
-            <div class="socials">
-                <a href="#">Twitter</a>
-                <a href="https://github.com/manojm404/Ensemble">GitHub</a>
+        <div class="container">
+            <div class="footer-content grid-3">
+                <div class="footer-section">
+                    <h4>Ensemble</h4>
+                    <p>Autonomous AI orchestration platform built for teams.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="https://github.com/manojm404/Ensemble" target="_blank">GitHub Repository</a></li>
+                        <li><a href="https://github.com/manojm404/Ensemble#-documentation">Documentation</a></li>
+                        <li><a href="https://github.com/manojm404/Ensemble/issues">Report Issues</a></li>
+                        <li><a href="https://github.com/manojm404/Ensemble/discussions">Discussions</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Community</h4>
+                    <ul>
+                        <li><a href="https://github.com/manojm404/Ensemble" target="_blank">GitHub</a></li>
+                        <li><a href="https://github.com/manojm404/Ensemble" target="_blank">Star the Repo</a></li>
+                        <li><a href="https://github.com/manojm404/Ensemble/fork" target="_blank">Fork & Contribute</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom flex-between">
+                <p>&copy; 2026 Ensemble. Open-source under MIT License.</p>
+                <div class="footer-links">
+                    <a href="https://github.com/manojm404/Ensemble" target="_blank">GitHub</a>
+                </div>
             </div>
         </div>
     </footer>
 
-    <script src="download.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>

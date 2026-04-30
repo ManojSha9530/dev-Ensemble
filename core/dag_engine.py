@@ -501,7 +501,6 @@ class DAGWorkflowEngine:
                         if branch_info and branch_info.get("type") == "switch":
                             # Prune non-selected branches
                             self._prune_branches(branch_info["prune_targets"], edges, pruned_nodes)
-                    else:
                         print(f"❌ [DAG Engine] Node {nid} failed. Halting workflow.", flush=True)
                         self._update_run_status(run_id, WorkflowState.FAILED.value)
                         

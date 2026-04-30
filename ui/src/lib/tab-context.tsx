@@ -110,7 +110,7 @@ export function TabProvider({ children }: { children: ReactNode }) {
       }
     }
     return [
-      { id: "home", title: "Home", url: "/", icon: MessageSquare, iconName: "MessageSquare", closable: false },
+      { id: "home", title: "Home", url: "/", icon: LayoutGrid, iconName: "LayoutGrid", closable: false },
       { id: "chat", title: "Chat", url: "/chat", icon: MessageSquare, iconName: "MessageSquare", closable: false },
     ];
   });

@@ -17,63 +17,71 @@ const Launcher = () => {
   };
 
   return (
-    <div className="h-full flex items-center justify-center relative overflow-hidden">
-      {/* Ensemble branded background */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] rounded-full bg-primary/5 blur-[140px]" />
-        <div className="absolute bottom-0 right-1/4 w-[400px] h-[300px] rounded-full bg-primary/3 blur-[120px]" />
-        <div className="absolute top-0 left-1/4 w-[250px] h-[250px] rounded-full bg-accent/5 blur-[100px]" />
+    <div className="h-full flex flex-col items-center justify-center relative overflow-hidden bg-background">
+      {/* Dynamic Background */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute top-[20%] left-[30%] w-[600px] h-[600px] rounded-full bg-primary/10 blur-[120px]" />
+        <div className="absolute bottom-[20%] right-[20%] w-[500px] h-[500px] rounded-full bg-accent/10 blur-[100px]" />
       </div>
 
-      <div className="relative z-10 flex flex-col items-center gap-6">
+      <div className="relative z-10 w-full max-w-5xl px-8 flex flex-col items-center">
         <motion.div
-          initial={{ opacity: 0, y: 12 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-          className="text-center"
+          transition={{ duration: 0.5, ease: "easeOut" }}
+          className="text-center mb-12"
         >
-          <h2 className="text-xl font-bold tracking-tight text-foreground mb-0.5">
-            Ensemble
-          </h2>
-          <p className="text-xs text-muted-foreground">
-            Choose an app to get started
+          <div className="inline-flex items-center justify-center px-3 py-1 mb-5 rounded-full bg-primary/10 border border-primary/20 shadow-sm">
+            <span className="text-[10px] font-bold uppercase tracking-widest text-primary">Sovereign Core OS</span>
+          </div>
+          <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-foreground mb-4 drop-shadow-sm">
+            Ensemble Intelligence
+          </h1>
+          <p className="text-base md:text-lg text-muted-foreground max-w-lg mx-auto">
+            Choose an application to begin your autonomous workflow session.
           </p>
         </motion.div>
 
-        <div className="glass border border-border/30 rounded-2xl p-8 shadow-xl">
-          <div className="grid grid-cols-5 gap-8">
-            {launchableApps.map((app, i) => {
-              const Icon = app.icon;
-              return (
-                <motion.button
-                  key={app.id}
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.1 + i * 0.04, type: "spring", stiffness: 300 }}
-                  whileHover={{ scale: 1.1, y: -4 }}
-                  whileTap={{ scale: 0.93 }}
-                  onClick={() => handleOpen(app)}
-                  className="flex flex-col items-center gap-2.5 group"
-                >
-                  <div className="h-14 w-14 rounded-2xl glass border-border/30 flex items-center justify-center shadow-sm group-hover:shadow-lg group-hover:border-primary/30 group-hover:glow-primary transition-all duration-300">
-                    <Icon className="h-6 w-6 text-muted-foreground group-hover:text-primary transition-colors duration-300" />
-                  </div>
-                  <span className="text-[11px] font-medium text-muted-foreground group-hover:text-foreground transition-colors truncate max-w-[72px]">
-                    {app.title}
-                  </span>
-                </motion.button>
-              );
-            })}
-          </div>
+        {/* The Grid: 3 columns, large cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full">
+          {launchableApps.map((app, i) => {
+            const Icon = app.icon;
+            return (
+              <motion.button
+                key={app.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 + i * 0.05, duration: 0.4, ease: "easeOut" }}
+                whileHover={{ scale: 1.02, y: -4 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => handleOpen(app)}
+                className="group relative flex flex-col items-start text-left p-6 rounded-2xl glass border border-border/40 hover:border-primary/40 hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] transition-all duration-300 overflow-hidden bg-card/40 hover:bg-card/60"
+              >
+                {/* Subtle hover gradient inside the card */}
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                
+                <div className="relative z-10 flex items-center justify-center h-14 w-14 rounded-xl bg-background/80 border border-border/50 shadow-sm mb-5 group-hover:scale-110 group-hover:bg-primary/10 group-hover:border-primary/30 group-hover:shadow-md transition-all duration-300">
+                  <Icon className="h-7 w-7 text-foreground/70 group-hover:text-primary transition-colors duration-300" />
+                </div>
+                
+                <h3 className="relative z-10 text-xl font-semibold text-foreground group-hover:text-primary transition-colors duration-300">
+                  {app.title}
+                </h3>
+                <p className="relative z-10 mt-2 text-sm text-muted-foreground/80 line-clamp-2 leading-relaxed">
+                  {app.description}
+                </p>
+              </motion.button>
+            );
+          })}
         </div>
 
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
-          className="text-[10px] text-muted-foreground/40 mt-2"
+          transition={{ delay: 0.6 }}
+          className="text-[11px] text-muted-foreground/40 mt-16 tracking-widest uppercase font-semibold"
         >
-          Your AI workspace — everything in one place
+          Your AI workspace — Everything in one place
         </motion.p>
       </div>
     </div>

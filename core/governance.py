@@ -278,21 +278,8 @@ app.include_router(health_router)
 
 def get_all_agents_logic():
     """Aggregate file-based and DB-persisted agents."""
-    discovery = skill_registry.list_skills()
-    custom = []
-    try:
-        if gov_instance:
-            with sqlite3.connect(gov_instance.db_path) as conn:
-                cursor = conn.execute("SELECT id, name, emoji, description, instruction, category, model, temperature FROM custom_agents")
-                for r in cursor.fetchall():
-                    custom.append({
-                        "id": r[0], "name": r[1], "emoji": r[2], "description": r[3],
-                        "instruction": r[4], "category": r[5], "model": r[6],
-                        "temperature": r[7], "source": "custom"
-                    })
-    except Exception as e:
-        print(f"⚠️ [Governance] Failed to read custom agents: {e}")
-    return discovery + custom
+    # All agent discovery is now handled by skill_registry
+    return skill_registry.list_skills()
 
 # --- API Endpoints ---
 

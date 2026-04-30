@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { Search, Plus, Bot, RefreshCw, Loader2, Building2, Package } from "lucide-react";
+import { Search, Plus, Bot, RefreshCw, Loader2, Building2, Package, ArrowLeft } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -259,8 +259,8 @@ const Agents = () => {
       {/* Main */}
       <div className="flex-1 flex flex-col min-w-0">
         <div className="flex items-center gap-4 p-4 border-b border-border/50 bg-background/20 backdrop-blur-md">
-          <Button variant="ghost" size="sm" className="gap-2 h-9 px-3 text-muted-foreground hover:text-foreground" onClick={() => navigate(-1)}>
-            ← Back
+          <Button variant="ghost" size="icon" onClick={() => navigate(-1)} className="h-9 w-9 rounded-lg hover:bg-white/5">
+            <ArrowLeft className="h-4 w-4" />
           </Button>
           <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/50" />

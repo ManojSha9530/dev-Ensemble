@@ -2,6 +2,7 @@ import os
 import json
 import httpx
 import re
+import asyncio
 from typing import List, Dict, Any, Optional
 from pathlib import Path
 
@@ -462,76 +463,86 @@ class LLMProvider:
         # 🛰️ Telemetry: Log the payload for protocol verification
         # print(f"DEBUG: Gemini Payload -> {json.dumps(payload, indent=2)}")
 
-        async with httpx.AsyncClient(timeout=300.0) as client:
-            try:
-                resp = await client.post(url, headers=headers, json=payload)
-                resp.raise_for_status()
-                data = resp.json()
-                
-                # 📢 Protocol Forensics: Print trace on protocol error
-                # print(f"DEBUG: Gemini Raw Response -> {json.dumps(data, indent=2)}")
+        max_retries = 3
+        base_delay = 2
 
-                candidates = data.get("candidates", [])
-                if not candidates:
-                    print(f"❌ [Gemini Protocol Error] No candidates. Data: {data}")
-                    return {"text": "Error: Gemini returned no candidates (Response may be blocked).", "usage": {}}
-
-                first = candidates[0]
-                finish_reason = first.get("finishReason")
-                
-                parts = first.get("content", {}).get("parts", [])
-                if not parts:
-                    if finish_reason == "UNEXPECTED_TOOL_CALL":
-                        print(f"❌ [Protocol Culprit] UNEXPECTED_TOOL_CALL detected. Trace: {json.dumps(first, indent=2)}")
-                    return {"text": f"Error: Gemini response incomplete (Finish Reason: {finish_reason}).", "usage": {}}
-
-                # Check for parallel function calls (Gemini 2.5 supports multiple per turn)
-                tool_calls = [p["functionCall"] for p in parts if "functionCall" in p]
-                
-                if tool_calls:
-                    # Capture preamble text often sent alongside tool calls (Crucial for protocol integrity)
-                    preamble = " ".join([p["text"] for p in parts if "text" in p]).strip() or None
-                    print(f"🛠️ [ParallelCall] Agent requested {len(tool_calls)} tools. Preamble: {preamble}")
+        for attempt in range(max_retries):
+            async with httpx.AsyncClient(timeout=300.0) as client:
+                try:
+                    resp = await client.post(url, headers=headers, json=payload)
+                    resp.raise_for_status()
+                    data = resp.json()
                     
-                    # 🧱 State Bridge: Add the model's turn (Text + Logic) to history
-                    messages.append({"role": "assistant", "content": preamble, "function_calls": tool_calls})
+                    # 📢 Protocol Forensics: Print trace on protocol error
+                    # print(f"DEBUG: Gemini Raw Response -> {json.dumps(data, indent=2)}")
+
+                    candidates = data.get("candidates", [])
+                    if not candidates:
+                        print(f"❌ [Gemini Protocol Error] No candidates. Data: {data}")
+                        return {"text": "Error: Gemini returned no candidates (Response may be blocked).", "usage": {}}
+
+                    first = candidates[0]
+                    finish_reason = first.get("finishReason")
                     
-                    # Execute all tools in parallel (logical batch)
-                    for fc in tool_calls:
-                        tool_name = fc["name"]
-                        tool_args = fc.get("args", {})
-                        
-                        try:
-                            from core.tools import execute_tool
-                            result = execute_tool(tool_name, tool_args)
-                        except Exception as e:
-                            result = f"Error executing tool '{tool_name}': {str(e)}"
-                        
-                        # Add individual responses to history
-                        messages.append({"role": "function", "name": tool_name, "content": result})
+                    parts = first.get("content", {}).get("parts", [])
+                    if not parts:
+                        if finish_reason == "UNEXPECTED_TOOL_CALL":
+                            print(f"❌ [Protocol Culprit] UNEXPECTED_TOOL_CALL detected. Trace: {json.dumps(first, indent=2)}")
+                        return {"text": f"Error: Gemini response incomplete (Finish Reason: {finish_reason}).", "usage": {}}
 
-                    print(f"🔄 [AgentMode] Re-calling LLM with {len(tool_calls)} results")
-                    return await self._chat_gemini(messages, agent_name=agent_name, **kwargs)
+                    # Check for parallel function calls (Gemini 2.5 supports multiple per turn)
+                    tool_calls = [p["functionCall"] for p in parts if "functionCall" in p]
+                    
+                    if tool_calls:
+                        # Capture preamble text often sent alongside tool calls (Crucial for protocol integrity)
+                        preamble = " ".join([p["text"] for p in parts if "text" in p]).strip() or None
+                        print(f"🛠️ [ParallelCall] Agent requested {len(tool_calls)} tools. Preamble: {preamble}")
+                        
+                        # 🧱 State Bridge: Add the model's turn (Text + Logic) to history
+                        messages.append({"role": "assistant", "content": preamble, "function_calls": tool_calls})
+                        
+                        # Execute all tools in parallel (logical batch)
+                        for fc in tool_calls:
+                            tool_name = fc["name"]
+                            tool_args = fc.get("args", {})
+                            
+                            try:
+                                from core.tools import execute_tool
+                                result = execute_tool(tool_name, tool_args)
+                            except Exception as e:
+                                result = f"Error executing tool '{tool_name}': {str(e)}"
+                            
+                            # Add individual responses to history
+                            messages.append({"role": "function", "name": tool_name, "content": result})
 
-                # Normal text response
-                text = parts[0].get("text", "")
-                usage = data.get("usageMetadata", {})
-                return {
-                    "text": text,
-                    "usage": {
-                        "prompt_tokens": usage.get("promptTokenCount", 0),
-                        "completion_tokens": usage.get("candidatesTokenCount", 0),
-                        "total_tokens": usage.get("totalTokenCount", 0)
+                        print(f"🔄 [AgentMode] Re-calling LLM with {len(tool_calls)} results")
+                        return await self._chat_gemini(messages, agent_name=agent_name, **kwargs)
+
+                    # Normal text response
+                    text = parts[0].get("text", "")
+                    usage = data.get("usageMetadata", {})
+                    return {
+                        "text": text,
+                        "usage": {
+                            "prompt_tokens": usage.get("promptTokenCount", 0),
+                            "completion_tokens": usage.get("candidatesTokenCount", 0),
+                            "total_tokens": usage.get("totalTokenCount", 0)
+                        }
                     }
-                }
 
-            except httpx.HTTPStatusError as e:
-                error_detail = f"HTTP {e.response.status_code}: {e.response.text[:200]}"
-                print(f"❌ [LLMProvider] Gemini API Error: {error_detail}", flush=True)
-                return {"text": f"Error calling Gemini: {error_detail}", "usage": {}}
-            except Exception as e:
-                print(f"❌ [LLMProvider] Gemini API Error: {str(e)}", flush=True)
-                return {"text": f"Error calling Gemini: {str(e)}", "usage": {}}
+                except httpx.HTTPStatusError as e:
+                    if e.response.status_code == 429 and attempt < max_retries - 1:
+                        sleep_time = base_delay * (2 ** attempt)
+                        print(f"⚠️ [LLMProvider] Rate limit (429) hit. Retrying in {sleep_time}s... (Attempt {attempt + 1}/{max_retries})", flush=True)
+                        await asyncio.sleep(sleep_time)
+                        continue
+                        
+                    error_detail = f"HTTP {e.response.status_code}: {e.response.text[:200]}"
+                    print(f"❌ [LLMProvider] Gemini API Error: {error_detail}", flush=True)
+                    return {"text": f"Error calling Gemini: {error_detail}", "usage": {}}
+                except Exception as e:
+                    print(f"❌ [LLMProvider] Gemini API Error: {str(e)}", flush=True)
+                    return {"text": f"Error calling Gemini: {str(e)}", "usage": {}}
 
     async def _chat_gemini_stream(self, messages: List[Dict[str, str]], agent_name: str = "Ensemble specialist", **kwargs):
         """Stream chunks from Gemini (no tool calling in stream mode)."""

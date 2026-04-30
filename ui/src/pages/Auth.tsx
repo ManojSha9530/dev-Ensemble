@@ -21,12 +21,17 @@ const Auth = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await fetch('http://127.0.0.1:8000/auth/login', {
+      const res = await fetch('http://127.0.0.1:8088/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
       });
-      if (!res.ok) throw new Error("Login failed");
+      
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => null);
+        throw new Error(errorData?.detail || "Login failed");
+      }
+      
       const data = await res.json();
       if (data.token) {
         localStorage.setItem('ensemble_auth_token', data.token);
@@ -53,12 +58,17 @@ const Auth = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await fetch('http://127.0.0.1:8000/auth/signup', {
+      const res = await fetch('http://127.0.0.1:8088/auth/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password, full_name: name })
+        body: JSON.stringify({ email, password, name })
       });
-      if (!res.ok) throw new Error("Signup failed");
+      
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => null);
+        throw new Error(errorData?.detail || "Signup failed");
+      }
+      
       const data = await res.json();
       if (data.token) {
         localStorage.setItem('ensemble_auth_token', data.token);
@@ -140,7 +150,15 @@ const Auth = () => {
                   </div>
                   <div className="relative">
                     <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <Input type={showPassword ? "text" : "password"} value={password} onChange={e => setPassword(e.target.value)} required placeholder="••••••••" className="pl-10 pr-10 bg-secondary/50 border-border/50 h-11" />
+                    <Input 
+                      type={showPassword ? "text" : "password"} 
+                      value={password} 
+                      onChange={e => setPassword(e.target.value)} 
+                      required 
+                      placeholder="••••••••" 
+                      autoComplete="current-password"
+                      className="pl-10 pr-10 bg-secondary/50 border-border/50 h-11" 
+                    />
                     <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
                       {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </button>

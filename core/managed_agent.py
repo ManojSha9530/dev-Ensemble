@@ -259,7 +259,7 @@ class ManagedAgent(Agent):
         input_res = input_limiter.prepare_for_llm(user_input)
         processed_input = input_res.data
         if input_res.truncated:
-            self.handle_thought(f"⚠️ Input truncated: {input_res.message}")
+            self.handle_thought(f"⚠️ Input truncated: {input_res.warning_message}")
 
         # 3. RECURSION GUARD (Security)
         try:

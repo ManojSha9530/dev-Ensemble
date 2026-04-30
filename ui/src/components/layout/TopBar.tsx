@@ -1,22 +1,18 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
-import {
-  User,
+
+import { Search,
+  ChevronLeft,
+  Grid3X3,
   Plus,
   X,
-  LogOut,
   Settings,
   Home,
+  User,
+  LogOut,
   Sun,
-  Moon,
-  Grid3X3,
-  Search,
-  ChevronLeft,
-  Loader2,
-  Calendar,
-  Sparkles
-} from "lucide-react";
+  Moon} from "lucide-react";
+import { Input } from "@/components/ui/input";
 import { useAIApps } from "@/lib/ai-apps";
 import { AddCustomAppDialog } from "@/components/home/AddCustomAppDialog";
 import { aiLogoMap } from "@/components/icons/ai-logos";
@@ -57,22 +53,7 @@ export function TopBar() {
 
   return (
     <header className="flex items-end shrink-0 z-40 bg-secondary/80 pt-1.5 px-2 gap-0.5 border-b border-border/20 shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
-      {/* Back Button (Only for sub-pages) */}
-      <AnimatePresence>
-        {location.pathname !== "/" && (
-          <motion.button
-            initial={{ opacity: 0, x: -10 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -10 }}
-            onClick={() => navigate(-1)}
-            className="h-9 px-3 flex items-center gap-1.5 rounded-t-lg text-muted-foreground hover:text-foreground hover:bg-background/40 transition-colors duration-150 shrink-0 mr-1"
-            title="Go back"
-          >
-            <ChevronLeft className="h-4 w-4" />
-            <span className="text-[10px] font-bold uppercase tracking-widest hidden md:inline">Back</span>
-          </motion.button>
-        )}
-      </AnimatePresence>
+
 
       {/* AI Apps button */}
       <div className="relative">
@@ -90,18 +71,12 @@ export function TopBar() {
       </div>
 
       {/* Tabs */}
-      <AnimatePresence mode="popLayout">
         {tabs.map((tab) => {
           const active = activeTabId === tab.id;
           const Icon = tab.id === "home" ? Home : tab.icon;
           return (
-            <motion.button
+            <button
               key={tab.id}
-              layout
-              initial={{ opacity: 0, scale: 0.9, width: 0 }}
-              animate={{ opacity: 1, scale: 1, width: "auto" }}
-              exit={{ opacity: 0, scale: 0.9, width: 0 }}
-              transition={{ type: "spring", stiffness: 500, damping: 35 }}
               onClick={() => navigate(tab.url)}
               className={`group relative flex items-center gap-2 px-3.5 h-9 text-xs font-medium rounded-t-lg transition-colors duration-150 min-w-[80px] max-w-[160px] overflow-hidden ${
                 active
@@ -123,10 +98,9 @@ export function TopBar() {
                   <X className="h-2.5 w-2.5" />
                 </span>
               )}
-            </motion.button>
+            </button>
           );
         })}
-      </AnimatePresence>
 
       {/* + button — opens new launcher tab (only if none exists) */}
       <button
@@ -229,24 +203,17 @@ function AIAppsPopover({ open, onClose }: { open: boolean; onClose: () => void }
   };
 
   return (
-    <AnimatePresence>
+    <div>
       {open && (
         <>
           {/* Backdrop — click to close */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+          <div
             onClick={onClose}
             className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50"
           />
           {/* Centered panel */}
-          <motion.div
+          <div
             ref={ref}
-            initial={{ opacity: 0, scale: 0.93 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.93 }}
-            transition={{ duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
             className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none"
           >
             <div className="w-[420px] max-h-[70vh] rounded-2xl glass border border-border/40 shadow-2xl p-5 overflow-hidden flex flex-col pointer-events-auto">
@@ -300,10 +267,10 @@ function AIAppsPopover({ open, onClose }: { open: boolean; onClose: () => void }
                 <AddCustomAppDialog onAdd={addCustomApp} />
               </div>
             </div>
-          </motion.div>
+          </div>
         </>
       )}
-    </AnimatePresence>
+    </div>
   );
 }
 
