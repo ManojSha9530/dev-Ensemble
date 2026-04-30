@@ -59,13 +59,13 @@ export function TopBar() {
       <div className="relative">
         <button
           onClick={() => setAiAppsOpen((p) => !p)}
-          className={`h-9 w-9 flex items-center justify-center rounded-t-lg transition-colors duration-150 shrink-0 ${
+          className={`h-11 w-11 flex items-center justify-center rounded-t-lg transition-colors duration-150 shrink-0 ${
             aiAppsOpen
               ? "bg-background text-foreground shadow-sm"
               : "text-muted-foreground hover:text-foreground hover:bg-background/40"
           }`}
         >
-          <Grid3X3 className="h-4 w-4" />
+          <Grid3X3 className="h-6 w-6" />
         </button>
         <AIAppsPopover open={aiAppsOpen} onClose={() => setAiAppsOpen(false)} />
       </div>
@@ -78,24 +78,24 @@ export function TopBar() {
             <button
               key={tab.id}
               onClick={() => navigate(tab.url)}
-              className={`group relative flex items-center gap-2 px-3.5 h-9 text-xs font-medium rounded-t-lg transition-colors duration-150 min-w-[80px] max-w-[160px] overflow-hidden ${
+              className={`group relative flex items-center gap-2 px-4 h-11 text-sm font-medium rounded-t-lg transition-colors duration-150 min-w-[100px] max-w-[200px] overflow-hidden ${
                 active
                   ? "bg-background text-foreground shadow-sm"
                   : "text-muted-foreground hover:text-foreground hover:bg-background/40"
               }`}
             >
               {tab.logoUrl ? (
-                <img src={tab.logoUrl} alt="" className="h-3.5 w-3.5 rounded-sm shrink-0" />
+                <img src={tab.logoUrl} alt="" className="h-5 w-5 rounded-sm shrink-0" />
               ) : (
-                <Icon className="h-3.5 w-3.5 shrink-0" />
+                <Icon className="h-5 w-5 shrink-0" />
               )}
               <span className="truncate flex-1 text-left">{tab.title}</span>
               {tab.closable && (
                 <span
                   onClick={(e) => handleCloseTab(e, tab.id)}
-                  className="h-4 w-4 flex items-center justify-center rounded-sm opacity-0 group-hover:opacity-100 hover:bg-muted transition-all duration-150 shrink-0"
+                  className="h-5 w-5 flex items-center justify-center rounded-sm opacity-0 group-hover:opacity-100 hover:bg-muted transition-all duration-150 shrink-0"
                 >
-                  <X className="h-2.5 w-2.5" />
+                  <X className="h-3.5 w-3.5" />
                 </span>
               )}
             </button>
@@ -110,36 +110,30 @@ export function TopBar() {
             navigate("/launcher");
             return;
           }
-          openApp({ id: `launcher-${Date.now()}`, title: "New Tab", url: "/launcher", icon: Plus as any, description: "App launcher" });
+          // The allApps import is missing from this file scope, so relying on fallback
           navigate("/launcher");
         }}
-        className="h-9 w-9 flex items-center justify-center rounded-t-lg text-muted-foreground hover:text-foreground hover:bg-background/40 transition-colors duration-150 shrink-0"
+        className="h-11 w-11 flex items-center justify-center rounded-t-lg text-muted-foreground hover:text-foreground hover:bg-background/40 transition-colors duration-150 shrink-0"
       >
-        <Plus className="h-4 w-4" />
+        <Plus className="h-6 w-6" />
       </button>
 
       <div className="flex-1" />
-      <div className="flex items-center gap-1 pb-1.5">
+      <div className="flex items-center gap-2 pb-1.5">
         <ThemeToggle />
         <button
           onClick={() => {
-            const settingsApp = allApps.find((a) => a.id === "settings");
-            if (settingsApp) {
-              openApp(settingsApp);
-              navigate(settingsApp.url);
-            } else {
               navigate("/settings/general");
-            }
           }}
-          className="h-7 w-7 flex items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-background/50 transition-colors duration-150"
+          className="h-9 w-9 flex items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-background/50 transition-colors duration-150"
         >
-          <Settings className="h-3.5 w-3.5" />
+          <Settings className="h-5 w-5" />
         </button>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <button className="h-7 w-7 flex items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-background/50 transition-colors duration-150">
-              <div className="h-5 w-5 rounded-full bg-primary/20 flex items-center justify-center">
-                <User className="h-3 w-3 text-primary" />
+            <button className="h-9 w-9 flex items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-background/50 transition-colors duration-150">
+              <div className="h-7 w-7 rounded-full bg-primary/20 flex items-center justify-center">
+                <User className="h-4 w-4 text-primary" />
               </div>
             </button>
           </DropdownMenuTrigger>
@@ -293,9 +287,9 @@ function ThemeToggle() {
   return (
     <button
       onClick={() => setDark((d) => !d)}
-      className="h-7 w-7 flex items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-background/50 transition-colors duration-150"
+      className="h-9 w-9 flex items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-background/50 transition-colors duration-150"
     >
-      {dark ? <Sun className="h-3.5 w-3.5" /> : <Moon className="h-3.5 w-3.5" />}
+      {dark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
     </button>
   );
 }

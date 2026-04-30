@@ -33,6 +33,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { getWorkflow, saveWorkflow, getAgents, type AgentSkill } from "@/lib/api";
 import { categoryColors } from "@/lib/agent-metadata";
 import { MagicWandDialog } from "@/components/workflow/MagicWandDialog";
+import { WorkflowOutputProvider } from "@/lib/workflow-output-context";
 import { generateWorkflowFromPrompt } from "@/lib/workflow-generator";
 import { WorkflowExecutionPanel } from "@/components/workflow/WorkflowExecutionPanel";
 import { useTabContext, allApps } from "@/lib/tab-context";
@@ -247,18 +248,30 @@ function WorkflowEditorInner() {
   }, [routeId, setNodes, setEdges]);
 
   // Re-check localStorage when window regains focus (e.g., after switching tabs/models)
-  useEffect(() => {
-    const onFocus = () => {
-      if (routeId && routeId !== "new") {
-        restoreStoredOutput(routeId);
-      }
-    };
-    window.addEventListener("focus", onFocus);
-    return () => window.removeEventListener("focus", onFocus);
-  }, [routeId]);
-
   const restoreStoredOutput = useCallback((id: string) => {
-    // Check ensemble_workflow_outputs (completed runs)
+    // Check workflow_run_* (running/complete state) FIRST to prioritize active runs over old cache
+    try {
+      const runRaw = localStorage.getItem(`workflow_run_${id}`);
+      if (runRaw) {
+        const runState = JSON.parse(runRaw);
+        if (runState.phase === "running") {
+          // If the task is running, don't clobber state that's actively being modified in the background. Just open it.
+          if (runState.task) setInitialTask(runState.task);
+          setStoredOutput(null); // Force clear old output so it shows running
+          // Only force open if we aren't already actively looking at it to prevent render loops
+          setExecutionPanelOpen((prev) => prev || true);
+          return;
+        }
+        if (runState.phase === "complete") {
+          if (runState.task) setInitialTask(runState.task);
+          if (runState.output) setStoredOutput(runState);
+          setExecutionPanelOpen((prev) => prev || true);
+          return;
+        }
+      }
+    } catch { /* ignore */ }
+
+    // Check ensemble_workflow_outputs (completed runs) ONLY if not actively running
     try {
       const raw = localStorage.getItem("ensemble_workflow_outputs");
       if (raw) {
@@ -267,32 +280,56 @@ function WorkflowEditorInner() {
         if (stored?.output?.markdown) {
           setStoredOutput(stored);
           if (stored.task) setInitialTask(stored.task);
-          setExecutionPanelOpen(true);
+          setExecutionPanelOpen((prev) => prev || true);
           return;
         }
       }
     } catch { /* ignore */ }
-
-    // Check workflow_run_* (running/complete state)
-    try {
-      const runRaw = localStorage.getItem(`workflow_run_${id}`);
-      if (runRaw) {
-        const runState = JSON.parse(runRaw);
-        if (runState.phase === "running" || runState.phase === "complete") {
-          if (runState.task) setInitialTask(runState.task);
-          if (runState.output) setStoredOutput(runState);
-          setExecutionPanelOpen(true);
-        }
-      }
-    } catch { /* ignore */ }
   }, []);
+
+  useEffect(() => {
+    const onFocus = () => {
+      if (routeId && routeId !== "new") {
+        restoreStoredOutput(routeId);
+      }
+    };
+    
+    const onWorkflowComplete = (e: Event) => {
+      const detail = (e as CustomEvent).detail;
+      if (detail && detail.runId === routeId) {
+        restoreStoredOutput(routeId);
+      }
+    };
+
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === `workflow_run_${routeId}`) {
+        restoreStoredOutput(routeId);
+      }
+    };
+
+    window.addEventListener("focus", onFocus);
+    window.addEventListener("workflow_complete", onWorkflowComplete);
+    window.addEventListener("storage", onStorage);
+    
+    return () => {
+      window.removeEventListener("focus", onFocus);
+      window.removeEventListener("workflow_complete", onWorkflowComplete);
+      window.removeEventListener("storage", onStorage);
+    };
+  }, [routeId, restoreStoredOutput]);
+
+  const { updateCurrentTabUrl } = useTabContext();
 
   const handleSave = async () => {
     try {
       setIsSaving(true);
       const graphJson = JSON.stringify({ nodes, edges });
       const result = await saveWorkflow(workflowName, graphJson, routeId !== "new" ? routeId : undefined);
-      if (routeId === "new" && result.id) navigate(`/workflows/${result.id}`, { replace: true });
+      if (routeId === "new" && result.id) {
+        navigate(`/workflows/${result.id}`, { replace: true });
+        // Update the tab context so TopBar doesn't get confused
+        updateCurrentTabUrl(`/workflows/${result.id}`, workflowName, "workflows");
+      }
       setSaveStatus("saved");
       setTimeout(() => setSaveStatus("idle"), 2000);
     } catch (e) {
@@ -605,7 +642,15 @@ function WorkflowEditorInner() {
       {/* Execution Panel */}
       <AnimatePresence>
         {executionPanelOpen && (
-          <WorkflowExecutionPanel nodes={nodes} edges={edges} onClose={() => setExecutionPanelOpen(false)} initialTask={initialTask} workflowId={routeId || "new"} workflowName={workflowName} storedOutput={storedOutput} />
+          <WorkflowExecutionPanel 
+            nodes={nodes} 
+            edges={edges} 
+            onClose={() => setExecutionPanelOpen(false)} 
+            initialTask={initialTask} 
+            workflowId={routeId || "new"} 
+            workflowName={workflowName} 
+            storedOutput={sessionStorage.getItem(`rerun_${routeId}`) ? undefined : storedOutput} 
+          />
         )}
       </AnimatePresence>
 

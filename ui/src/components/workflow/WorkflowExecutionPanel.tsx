@@ -112,10 +112,20 @@ export function WorkflowExecutionPanel({ nodes, edges, onClose, initialTask = ""
   const fileInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
   const { setOutput } = useWorkflowOutput();
-  const { openApp } = useTabContext();
+  const { openApp, updateCurrentTabUrl } = useTabContext();
 
   // Restore from storedOutput prop (passed directly from WorkflowEditor)
   useEffect(() => {
+    // If the component is explicitly instructed to rerun (e.g. from the editor), reset state.
+    if (sessionStorage.getItem(`rerun_${activeWorkflowId}`)) {
+      sessionStorage.removeItem(`rerun_${activeWorkflowId}`);
+      localStorage.removeItem(`workflow_run_${activeWorkflowId}`);
+      setPhase("input");
+      setFinalOutput(null);
+      setSteps([]);
+      return;
+    }
+
     if (storedOutput?.output) {
       setPhase("complete");
       setTaskInput(storedOutput.task);
@@ -147,7 +157,7 @@ export function WorkflowExecutionPanel({ nodes, edges, onClose, initialTask = ""
     if (initialTask) {
       setTaskInput(initialTask);
     }
-  }, []);
+  }, [activeWorkflowId, storedOutput, initialTask]);
 
   // Sync initialTask prop changes (e.g., after AI generation)
   useEffect(() => {
@@ -158,21 +168,14 @@ export function WorkflowExecutionPanel({ nodes, edges, onClose, initialTask = ""
 
   // Persist running state to localStorage for tab-switch resilience
   useEffect(() => {
-    if (workflowId !== "new" && workflowId !== activeWorkflowId) {
+    if (activeWorkflowId && activeWorkflowId !== "new") {
       try {
         localStorage.setItem(`workflow_run_${activeWorkflowId}`, JSON.stringify({
           phase, task: taskInput, output: finalOutput, steps
         }));
       } catch { /* ignore */ }
     }
-    if (workflowId !== "new") {
-      try {
-        localStorage.setItem(`workflow_run_${workflowId}`, JSON.stringify({
-          phase, task: taskInput, output: finalOutput, steps
-        }));
-      } catch { /* ignore */ }
-    }
-  }, [phase, taskInput, finalOutput, steps, workflowId, activeWorkflowId]);
+  }, [phase, taskInput, finalOutput, steps, activeWorkflowId]);
 
   // Persist state changes (only after completion)
   useEffect(() => {
@@ -250,6 +253,9 @@ export function WorkflowExecutionPanel({ nodes, edges, onClose, initialTask = ""
           runId = saved.id;
           setActiveWorkflowId(runId);
           console.log(`✅ Auto-saved workflow: ${runId}`);
+          // Force the URL to update so tab switches don't reset to /workflows/new
+          navigate(`/workflows/${runId}`, { replace: true });
+          updateCurrentTabUrl(`/workflows/${runId}`, workflowName, "workflows");
         } catch (e) {
           console.warn("Failed to auto-save workflow, continuing with temp ID", e);
         }
@@ -299,16 +305,16 @@ export function WorkflowExecutionPanel({ nodes, edges, onClose, initialTask = ""
       }
 
       // 4. Build final results object — include Agent Team Roster
-      const steps = result.steps || [];
-      const allMarkdown = steps.map((s: any) => `\n\n---\n\n### ${s.agent_name}\n\n${s.output}`).join("");
+      const stepsList = result.steps || [];
+      const allMarkdown = stepsList.map((s: any) => `\n\n---\n\n### ${s.agent_name}\n\n${s.output}`).join("");
 
       // Build Agent Team table so users can see WHO worked on their task
-      const agentTable = steps.map((s: any, i: number) => {
+      const agentTable = stepsList.map((s: any, i: number) => {
         const emoji = s.agent_name.match(/^\p{Emoji}/u)?.[0] || '🤖';
         const name = s.agent_name.replace(/^\p{Emoji}*\s*/u, '').trim();
         return `| ${i + 1} | ${emoji} | ${name} | ${s.duration || 0}s |`;
       }).join('\n');
-      const totalDuration = steps.reduce((sum: number, s: any) => sum + (s.duration || 0), 0);
+      const totalDuration = stepsList.reduce((sum: number, s: any) => sum + (s.duration || 0), 0);
 
       const finalResult: WorkflowOutput = {
         markdown: `# Workflow Results\n\n**Task:** ${taskInput}\n\n### 🤖 Agent Team\n\n| # | | Agent | Time |\n|---|---|---|---|\n${agentTable}\n\n**Total:** ${totalDuration}s\n${allMarkdown}`,
@@ -322,20 +328,41 @@ export function WorkflowExecutionPanel({ nodes, edges, onClose, initialTask = ""
         workflowId: runId
       };
 
-      setFinalOutput(finalResult);
-      setPhase("complete");
+      const finalSteps = stepsList.map((s: any) => ({
+        id: s.id,
+        agentName: s.agent_name,
+        emoji: "🤖",
+        status: "done" as const,
+        output: s.output,
+        duration: s.duration || 2
+      }));
 
-      toast.success(`Workflow completed — ${steps.length} agent(s) executed`);
+      // --- CRITICAL FIX: Persist directly in case component unmounted while awaiting ---
+      try {
+        localStorage.setItem(`workflow_run_${runId}`, JSON.stringify({
+          phase: "complete", task: taskInput, output: finalResult, steps: finalSteps
+        }));
+      } catch { /* ignore */ }
 
       // 5. Commit to Global Output Store
       setOutput(runId, {
         title: workflowName,
         task: taskInput,
-        agentCount: steps.length,
+        agentCount: finalSteps.length,
         output: finalResult,
         completedAt: new Date(),
         workflowId: runId,
       });
+
+      // Dispatch event for instances that might be remounted or listening
+      window.dispatchEvent(new CustomEvent('workflow_complete', { detail: { runId } }));
+
+      // Update local UI state
+      setFinalOutput(finalResult);
+      setSteps(finalSteps);
+      setPhase("complete");
+
+      toast.success(`Workflow completed — ${finalSteps.length} agent(s) executed`);
 
     } catch (err: any) {
       console.error("❌ Workflow Execution Error:", err);

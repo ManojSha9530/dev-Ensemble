@@ -65,7 +65,7 @@ interface TabContextType {
   openApp: (app: AppItem) => void;
   openExternalApp: (app: { id: string; title: string; url: string; logoUrl: string }) => void;
   closeTab: (tabId: string) => void;
-  updateCurrentTabUrl: (url: string, title?: string) => void;
+  updateCurrentTabUrl: (url: string, title?: string, tabId?: string) => void;
 }
 
 const TabContext = createContext<TabContextType | null>(null);
@@ -162,10 +162,14 @@ export function TabProvider({ children }: { children: ReactNode }) {
     setTabs((prev) => prev.filter((t) => t.id !== tabId || !t.closable));
   }, []);
 
-  const updateCurrentTabUrl = useCallback((url: string, title?: string) => {
+  const updateCurrentTabUrl = useCallback((url: string, title?: string, tabId?: string) => {
     setTabs((prev) => {
       return prev.map((t) => {
-        if (t.id === "workflows" || t.url.startsWith("/workflows/")) {
+        // If a specific tabId is provided, update that exact tab.
+        // Otherwise, do a best-effort guess (legacy behavior, but safer).
+        if (tabId && t.id === tabId) {
+          return { ...t, url, title: title || t.title };
+        } else if (!tabId && (t.id === "workflows" || t.url.startsWith("/workflows/"))) {
           return { ...t, url, title: title || t.title };
         }
         return t;

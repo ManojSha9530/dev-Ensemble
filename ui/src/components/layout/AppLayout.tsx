@@ -1,7 +1,6 @@
 import { Outlet, useLocation } from "react-router-dom";
 import { InspectorProvider } from "./InspectorPanel";
 import { TopBar } from "./TopBar";
-import { TabProvider } from "@/lib/tab-context";
 import { AnimatePresence, motion } from "framer-motion";
 
 const pageVariants = {
@@ -14,7 +13,6 @@ export function AppLayout() {
   const location = useLocation();
 
   return (
-    <TabProvider>
       <div className="h-screen flex flex-col w-full overflow-hidden">
         <TopBar />
         <main className="flex-1 min-h-0 overflow-hidden border-t border-border/20 shadow-inner">
@@ -51,6 +49,5 @@ export function AppLayout() {
           </div>
         </footer>
       </div>
-    </TabProvider>
   );
 }
