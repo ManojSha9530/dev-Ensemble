@@ -2,22 +2,28 @@ import { useParams } from "react-router-dom";
 import { useAIApps, defaultAIApps } from "@/lib/ai-apps";
 import { useState, useEffect, useRef, useCallback } from "react";
 
-// Dynamically import Tauri only when needed
+// Dynamically import Tauri only when available (desktop app only)
 let Webview: any = null;
 let getCurrentWindow: any = null;
 let isTauri: any = null;
 
-// Try to load Tauri modules - will fail gracefully in web environment
-try {
-  const tauriModules = (globalThis as any).__TAURI_INTERNALS__ || {};
-  if (Object.keys(tauriModules).length > 0) {
-    import("@tauri-apps/api/webview").then(m => { Webview = m.Webview; });
-    import("@tauri-apps/api/window").then(m => { getCurrentWindow = m.getCurrentWindow; });
-    import("@tauri-apps/api/core").then(m => { isTauri = m.isTauri; });
+const loadTauriModules = async () => {
+  try {
+    const webviewModule = await import("@tauri-apps/api/webview");
+    const windowModule = await import("@tauri-apps/api/window");
+    const coreModule = await import("@tauri-apps/api/core");
+    
+    Webview = webviewModule.Webview;
+    getCurrentWindow = windowModule.getCurrentWindow;
+    isTauri = coreModule.isTauri;
+  } catch (e) {
+    // Tauri modules not available - running in web mode
+    console.log("Tauri not available - running in web mode");
   }
-} catch (e) {
-  // Tauri not available, running in web mode
-}
+};
+
+// Initialize on module load
+loadTauriModules();
 
 const ExternalApp = () => {
   const { appId } = useParams<{ appId: string }>();
@@ -70,8 +76,6 @@ const ExternalApp = () => {
         }
 
         // Create the webview with proper positioning
-        // In Tauri 2, webview position is relative to window content area (not screen)
-        // So we only need the container's position within the window, not the window position
         const webview = new Webview(appWindow, label, {
           url: app.url,
           x: Math.round(rect.left),
