@@ -21,4 +21,20 @@ export default defineConfig(({ mode }) => ({
     },
     dedupe: ["react", "react-dom", "react/jsx-runtime", "react/jsx-dev-runtime", "@tanstack/react-query", "@tanstack/query-core"],
   },
+  build: {
+    rollupOptions: {
+      external: [],
+      output: {
+        manualChunks: {},
+      },
+    },
+    // Ignore warnings about optional dependencies
+    commonjsOptions: {
+      ignoreDynamicRequires: true,
+    },
+  },
+  optimizeDeps: {
+    // Don't pre-bundle Tauri since it's only used in desktop
+    exclude: ["@tauri-apps/api"],
+  },
 }));
