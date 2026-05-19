@@ -23,18 +23,29 @@ export default defineConfig(({ mode }) => ({
   },
   build: {
     rollupOptions: {
-      external: [],
+      // Treat Tauri as external - don't bundle it
+      external: [
+        "@tauri-apps/api",
+        "@tauri-apps/api/core",
+        "@tauri-apps/api/window",
+        "@tauri-apps/api/webview",
+      ],
       output: {
-        manualChunks: {},
+        // These will be undefined in web builds, causing graceful fallback
+        globals: {
+          "@tauri-apps/api": "undefined",
+          "@tauri-apps/api/core": "undefined",
+          "@tauri-apps/api/window": "undefined",
+          "@tauri-apps/api/webview": "undefined",
+        },
       },
     },
-    // Ignore warnings about optional dependencies
     commonjsOptions: {
       ignoreDynamicRequires: true,
     },
   },
   optimizeDeps: {
-    // Don't pre-bundle Tauri since it's only used in desktop
+    // Don't pre-bundle Tauri
     exclude: ["@tauri-apps/api"],
   },
 }));
