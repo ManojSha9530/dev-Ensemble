@@ -1,9 +1,23 @@
 import { useParams } from "react-router-dom";
 import { useAIApps, defaultAIApps } from "@/lib/ai-apps";
-import { Webview } from "@tauri-apps/api/webview";
-import { getCurrentWindow } from "@tauri-apps/api/window";
-import { isTauri } from "@tauri-apps/api/core";
 import { useState, useEffect, useRef, useCallback } from "react";
+
+// Dynamically import Tauri only when needed
+let Webview: any = null;
+let getCurrentWindow: any = null;
+let isTauri: any = null;
+
+// Try to load Tauri modules - will fail gracefully in web environment
+try {
+  const tauriModules = (globalThis as any).__TAURI_INTERNALS__ || {};
+  if (Object.keys(tauriModules).length > 0) {
+    import("@tauri-apps/api/webview").then(m => { Webview = m.Webview; });
+    import("@tauri-apps/api/window").then(m => { getCurrentWindow = m.getCurrentWindow; });
+    import("@tauri-apps/api/core").then(m => { isTauri = m.isTauri; });
+  }
+} catch (e) {
+  // Tauri not available, running in web mode
+}
 
 const ExternalApp = () => {
   const { appId } = useParams<{ appId: string }>();
@@ -12,14 +26,14 @@ const ExternalApp = () => {
   const [error, setError] = useState<string | null>(null);
   const [webviewReady, setWebviewReady] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-  const webviewRef = useRef<Webview | null>(null);
+  const webviewRef = useRef<any>(null);
 
   const app = allAIApps.find((a) => a.id === appId) || defaultAIApps.find((a) => a.id === appId);
-  const inTauri = isTauri();
+  const inTauri = isTauri ? isTauri() : false;
 
   const cleanupWebview = useCallback(() => {
     if (webviewRef.current) {
-      webviewRef.current.close().catch((err) => {
+      webviewRef.current.close().catch((err: any) => {
         console.log("Webview already closed:", err);
       });
       webviewRef.current = null;
@@ -27,7 +41,7 @@ const ExternalApp = () => {
   }, []);
 
   useEffect(() => {
-    if (!inTauri || !app || !containerRef.current) return;
+    if (!inTauri || !app || !containerRef.current || !Webview || !getCurrentWindow) return;
 
     let isMounted = true;
 
