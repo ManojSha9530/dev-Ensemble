@@ -18,8 +18,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          submodules: 'false'  # Skip broken submodules
       
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -31,8 +29,8 @@ jobs:
       - name: Install dependencies
         run: cd ui && npm install
       
-      - name: Build
-        run: cd ui && npm run build
+      - name: Build web version only
+        run: cd ui && VITE_BUILD_TARGET=web npm run build
       
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
