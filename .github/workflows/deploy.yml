@@ -17,10 +17,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          submodules: 'false'  # Skip broken submodules
       
       - name: Setup Node.js
         uses: actions/setup-node@v4
